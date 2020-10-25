@@ -5,7 +5,7 @@ RSpec.describe 'Task', type: :system do
     let(:project) { create(:project) }
     let(:task) { create(:task, project_id: project.id) }
     context '正常系' do
-      fit '一覧ページにアクセスした場合、Taskが表示されること' do
+      it '一覧ページにアクセスした場合、Taskが表示されること' do
         # TODO: ローカル変数ではなく let を使用してください
         visit project_tasks_path(project)
         expect(page).to have_content task.title
@@ -97,15 +97,15 @@ RSpec.describe 'Task', type: :system do
   end
 
   describe 'Task削除' do
+    let(:project) { create(:project) }
+    let!(:task) { create(:task, project_id: project.id) }
     context '正常系' do
       # FIXME: テストが失敗するので修正してください
       it 'Taskが削除されること' do
-        project = FactoryBot.create(:project)
-        task = FactoryBot.create(:task, project_id: project.id)
         visit project_tasks_path(project)
         click_link 'Destroy'
         page.driver.browser.switch_to.alert.accept
-        expect(page).not_to have_content task.title
+        expect(find('.task_list')).not_to have_content(task.title)
         expect(Task.count).to eq 0
         expect(current_path).to eq project_tasks_path(project)
       end
